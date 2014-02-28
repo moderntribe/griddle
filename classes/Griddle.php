@@ -172,57 +172,50 @@ class Griddle {
 
 		// Settings
 		$grid1_size    = 10;
-		$grid1_color   = 0;
+		$grid1_color   = array( 0, 0, 0, 124 );
 		$grid2_size    = 100;
-		$grid2_color   = 0;
+		$grid2_color   = array( 0, 0, 0, 124 );
 		$percent_lines = array( 5, 10, 15, 20 );
-		$percent_color = 255;
-		$font          = 'fonts/Helvetica.otf';
+		$percent_color = array( 255, 255, 255, 40 );
 		$font          = 'fonts/OSP-DIN.ttf';
 
 		// Colors
 		$colors                 = array();
-		$colors['background']   = 200;
-		$colors['text']         = 255;
+		$colors['background']   = array( 222, 222, 222, 0 );
+		$colors['text']         = array( 255, 255, 255, 0 );
 		$colors['grid1']        = $grid1_color;
 		$colors['grid2']        = $grid2_color;
 		$colors['percent']      = $percent_color;
-		$colors['crosshair']    = 0;
-		$colors['crosshair_bg'] = 255;
+		$colors['crosshair']    = array( 255, 255, 255, 50 );
 
 		ini_set( 'memory_limit', '64M' );
 
 		$img = imagecreatetruecolor( $width, $height );
 
 		foreach ( $colors as $ck => $cv ) {
-			switch ( $ck ) {
-				case 'grid1' :
-					$colors[$ck] = imagecolorallocatealpha( $img, $cv, $cv, $cv, 119 );
-					break;
-				case 'grid2' :
-					$colors[$ck] = imagecolorallocatealpha( $img, $cv, $cv, $cv, 64 );
-					break;
-				default :
-					$colors[$ck] = imagecolorallocate( $img, $cv, $cv, $cv );
+			if ( is_int( $cv ) ) {
+				$colors[$ck] = imagecolorallocate( $img, $cv, $cv, $cv );
+			} elseif ( count( $cv ) == 4 ) {
+				$colors[$ck] = imagecolorallocatealpha( $img, $cv[0], $cv[1], $cv[2], $cv[3] );
+			} elseif ( count( $cv ) == 3 ) {
+				$colors[$ck] = imagecolorallocate( $img, $cv[0], $cv[1], $cv[2] );
 			}
 		}
 
 		imagefill( $img, 0, 0, $colors['background'] );
-
-		$text = $width . ' x ' . $height;
-
-		$fontsize = $this->dynamic_font_size( $width );
-
-		if ( $fontsize > 0 ) {
-			$this->ttf_center( $img, $font, $text, $colors['text'], $fontsize );
-		}
 
 		$this->image_grid( $img, $width, $height, $grid1_size, $colors['grid1'] );
 		$this->image_grid( $img, $width, $height, $grid2_size, $colors['grid2'] );
 
 		$this->image_percent( $img, $width, $height, $percent_lines, $colors['percent'], $font );
 
-		$this->image_crosshair( $img, $width, $height, $colors['crosshair'], $colors['crosshair_bg'] );
+		$this->image_crosshair( $img, $width, $height, $colors['crosshair'] );
+
+		$text     = $width . ' x ' . $height;
+		$fontsize = $this->dynamic_font_size( $width );
+		if ( $fontsize > 0 ) {
+			$this->ttf_center( $img, $font, $text, $colors['text'], $fontsize );
+		}
 
 		imagepng( $img, $cachefile ); # store the image to cachefile
 		imagedestroy( $img );
@@ -260,21 +253,12 @@ class Griddle {
 	 * @param int      $color
 	 * @param int      $color_bg
 	 */
-	private function image_crosshair( $img, $width, $height, $color, $color_bg ) {
+	private function image_crosshair( $img, $width, $height, $color ) {
 
-		$center_w = (int) $width / 2;
-		$center_h = (int) $height / 2;
-
-		// Horizontal lines
+		$center_w = round( $width / 2 );
+		$center_h = round( $height / 2 );
 		imageline( $img, $center_w, 0, $center_w, $height, $color );
-		imageline( $img, $center_w - 1, 0, $center_w - 1, $height, $color_bg );
-		imageline( $img, $center_w + 1, 0, $center_w + 1, $height, $color_bg );
-
-		// Vertical lines
 		imageline( $img, 0, $center_h, $width, $center_h, $color );
-		imageline( $img, 0, $center_h - 1, $width, $center_h - 1, $color_bg );
-		imageline( $img, 0, $center_h + 1, $width, $center_h + 1, $color_bg );
-
 	}
 
 	/**
@@ -301,8 +285,8 @@ class Griddle {
 			$ttf_size = imagettfbbox( $size, 0, $font, $text );
 			$txtw     = abs( $ttf_size[2] - $ttf_size[0] );
 			$txth     = abs( $ttf_size[1] - $ttf_size[7] );
-			$txtx = $x + 2;
-			$txty = $y + $txth;
+			$txtx     = $x + 2;
+			$txty     = $y + $txth;
 			imagettftext( $img, $size, 0, $txtx, $txty, $color, $font, $text );
 		}
 	}
