@@ -20,7 +20,20 @@ if ( isset( $_REQUEST['sizes'] ) && ! empty( $_REQUEST['sizes'] ) ) {
 		isset( $_REQUEST['download'] )
 	);
 
+// Single file via pretty url
+} elseif ( isset( $_SERVER['REDIRECT_URL'] ) ) {
+	preg_match( '/(\d+)x(\d+)/', strtolower( $_SERVER['REDIRECT_URL'] ), $matches );
+	if ( ! empty( $matches ) ) {
+		$w = $matches[1];
+		$h = $matches[2];
+		$griddle->process_single(
+			$w,
+			$h,
+			isset( $_REQUEST['download'] )
+		);
+	}
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,58 +44,59 @@ if ( isset( $_REQUEST['sizes'] ) && ! empty( $_REQUEST['sizes'] ) ) {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
 	<style type="text/css">
-	body {
-		padding-top: 40px;
-		padding-bottom: 40px;
-		background-color: #f5f5f5;
-	}
+		body {
+			padding-top      : 40px;
+			padding-bottom   : 40px;
+			background-color : #f5f5f5;
+		}
 
-	.form-signin {
-		max-width: 300px;
-		padding: 19px 29px 29px;
-		margin: 0 auto 20px;
-		background-color: #fff;
-		border: 1px solid #e5e5e5;
-		-webkit-border-radius: 5px;
-		 -moz-border-radius: 5px;
-		      border-radius: 5px;
-		-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-		 -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-		      box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	}
-	.form-signin .form-signin-heading,
-	.form-signin .checkbox {
-		margin-bottom: 10px;
-		margin-top: 10px;
-	}
+		.form-signin {
+			max-width             : 300px;
+			padding               : 19px 29px 29px;
+			margin                : 0 auto 20px;
+			background-color      : #fff;
+			border                : 1px solid #e5e5e5;
+			-webkit-border-radius : 5px;
+			-moz-border-radius    : 5px;
+			border-radius         : 5px;
+			-webkit-box-shadow    : 0 1px 2px rgba(0, 0, 0, .05);
+			-moz-box-shadow       : 0 1px 2px rgba(0, 0, 0, .05);
+			box-shadow            : 0 1px 2px rgba(0, 0, 0, .05);
+		}
 
-	.form-signin textarea {
-		width: 286px;
-		font-size: 25px;
-	}
+		.form-signin .form-signin-heading,
+		.form-signin .checkbox {
+			margin-bottom : 10px;
+			margin-top    : 10px;
+		}
 
-	.form-signin input[type="number"] {
-		height: 40px;
-		font-size: 30px;
-		width: 90px;
-		line-height: 34px;
-	}
+		.form-signin textarea {
+			width     : 286px;
+			font-size : 25px;
+		}
 
-	.form-signin .btn {
-		width: 100%;
-	}
+		.form-signin input[type="number"] {
+			height      : 40px;
+			font-size   : 30px;
+			width       : 90px;
+			line-height : 34px;
+		}
+
+		.form-signin .btn {
+			width : 100%;
+		}
 
 	</style>
 	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 	<!--[if lt IE 9]>
-	      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	    <![endif]-->
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 </head>
 <body>
-	<div class="container">
+<div class="container">
 	<?php
-	if ( !empty($griddle->errors) ) {
-		foreach ($griddle->errors as $error) {
+	if ( ! empty( $griddle->errors ) ) {
+		foreach ( $griddle->errors as $error ) {
 			echo '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>';
 			echo "$error";
 			echo '</div>';
@@ -106,6 +120,7 @@ if ( isset( $_REQUEST['sizes'] ) && ! empty( $_REQUEST['sizes'] ) ) {
 		<input type="hidden" name="download" value="1">
 		<button class="btn btn-large" type="submit">Download the ZIP File!</button>
 	</form>
-	</div>
+	<div  class="form-signin"><img src="/300x300" alt="Griddle Example" /></div>
+</div>
 </body>
 </html>
