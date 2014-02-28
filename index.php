@@ -3,18 +3,20 @@
 require_once( 'classes/Griddle.php' );
 $griddle = new Griddle();
 
-if ( isset($_REQUEST['sizes']) && !empty($_REQUEST['sizes']) ) {
+// Batch file creation
+if ( isset( $_REQUEST['sizes'] ) && ! empty( $_REQUEST['sizes'] ) ) {
 
 	$griddle->process_multiple(
 		$_REQUEST['sizes'],
 		isset( $_REQUEST['download'] )
 	);
 
-} elseif ( isset($_REQUEST['width']) && !empty($_REQUEST['width']) && isset($_REQUEST['height']) && !empty($_REQUEST['height']) ) {
+// Single file creation
+} elseif ( isset( $_REQUEST['w'] ) && ! empty( $_REQUEST['w'] ) && isset( $_REQUEST['h'] ) && ! empty( $_REQUEST['h'] ) ) {
 
 	$griddle->process_single(
-		$_REQUEST['width'],
-		$_REQUEST['height'],
+		$_REQUEST['w'],
+		$_REQUEST['h'],
 		isset( $_REQUEST['download'] )
 	);
 
@@ -89,9 +91,10 @@ if ( isset($_REQUEST['sizes']) && !empty($_REQUEST['sizes']) ) {
 	?>
 	<form class="form-signin">
 		<h2 class="form-signin-heading">Generate an Image</h2>
-		<div class="form-inline"><input type="number" name="width" placeholder="300" />
-		X
-		<input type="number" name="height" placeholder="250" /></div>
+
+		<div class="form-inline"><input type="number" name="w" value="300" />
+			X
+			<input type="number" name="h" value="250" /></div>
 		<label class="checkbox">
 			<input type="checkbox" name="download" value="1" checked> Download
 		</label>
